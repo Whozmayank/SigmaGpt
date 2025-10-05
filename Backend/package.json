@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "cd Backend && npm start",
     "dev": "nodemon server.js",
     "build-frontend": "echo 'no build needed'"
   },
