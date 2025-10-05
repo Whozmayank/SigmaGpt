@@ -3,6 +3,8 @@ import "dotenv/config";
 import cors from "cors";
 import mongoose from "mongoose";
 import chatRoutes from "./routes/chat.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const PORT = 8080;
@@ -26,6 +28,17 @@ const connecDB = async () => {
     console.log("failed to connect to db", err);
   }
 };
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+if (process.env.NODE_ENV === "production") {
+  const frontendPath = path.join(__dirname, "../frontend/dist");
+  app.use(express.static(frontendPath));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(frontendPath, "index.html"));
+  });
+}
 
 // app.post("/test", async (req, res) => {
 //   const options = {
