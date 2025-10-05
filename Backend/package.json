@@ -1,14 +1,4 @@
 {
-  "name": "sigma-gpt-backend",
-  "version": "1.0.0",
-  "description": "Backend for SigmaGPT Chat App",
-  "main": "server.js",
-  "type": "module",
-  "scripts": {
-    "start": "cd Backend && npm start",
-    "dev": "nodemon server.js",
-    "build-frontend": "echo 'no build needed'"
-  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
@@ -17,12 +7,7 @@
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.1",
+    "nodemon": "^3.1.10",
     "openai": "^5.22.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.10"
-  },
-  "engines": {
-    "node": "22.x"
   }
 }
