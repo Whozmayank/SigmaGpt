@@ -9,6 +9,9 @@ import { fileURLToPath } from "url";
 const app = express();
 const PORT = 8080;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use(cors());
 app.use(express.json());
 
@@ -28,9 +31,6 @@ const connecDB = async () => {
     console.log("failed to connect to db", err);
   }
 };
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 if (process.env.NODE_ENV === "production") {
   const frontendPath = path.join(__dirname, "../frontend/dist");
