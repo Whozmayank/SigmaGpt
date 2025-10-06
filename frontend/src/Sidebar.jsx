@@ -6,10 +6,13 @@ import { v1 as uuidv1 } from "uuid";
 function Sidebar() {
     const { allThreads, setAllThreads, currThreadId, setNewChat, setPrompt, setReply, setCurrThreadId, setPrevChats } = useContext(MyContext);
 
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+
     const getAllThreads = async () => {
 
         try {
-            const response = await fetch("http://localhost:8080/api/thread");
+            const response = await fetch(`${backendUrl}/thread`);
             const res = await response.json();
             const filteredData = res.map(thread => ({
                 threadId: thread.threadId,
@@ -39,7 +42,7 @@ function Sidebar() {
 
         setCurrThreadId(newThreadId);
         try {
-            const response = await fetch(`http://localhost:8080/api/thread/${newThreadId}`);
+            const response = await fetch(`${backendUrl}/thread/${newThreadId}`);
             const res = await response.json();
             console.log(res);
             setPrevChats(res.messages);
@@ -53,9 +56,7 @@ function Sidebar() {
 
     const deleteThread = async (threadId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/thread/${threadId}`, {
-                method: "DELETE",
-            });
+            const response = await fetch(`${backendUrl}/thread/${threadId}`, { method: "DELETE" });
             const res = await response.json();
             console.log(res);
 

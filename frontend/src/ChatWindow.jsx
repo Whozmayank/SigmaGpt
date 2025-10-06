@@ -24,7 +24,8 @@ function ChatWindow() {
             })
         };
         try {
-            const response = await fetch("http://localhost:8080/api/chat", options);
+            const backendUrl = import.meta.env.VITE_BACKEND_URL;
+            const response = await fetch(`${backendUrl}/chat`, options);
             const res = await response.json();
             console.log(res);
             setReply(res.reply);
