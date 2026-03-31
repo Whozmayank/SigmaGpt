@@ -2,7 +2,7 @@ import axios from "axios";
 
 const getOllamaAPIResponse = async (messages) => {
   try {
-    console.log("📤 Sending to Ollama:", messages);
+    console.log("📤 Sending:", messages);
 
     const response = await axios.post(
       "http://localhost:11434/api/chat",
@@ -13,15 +13,25 @@ const getOllamaAPIResponse = async (messages) => {
       }
     );
 
-    console.log("📥 Ollama response:", response.data);
+    console.log("📥 Full response:", response.data);
 
-    return response.data.message.content;
+    // ✅ SAFE parsing
+    if (
+      response.data &&
+      response.data.message &&
+      response.data.message.content
+    ) {
+      return response.data.message.content;
+    }
+
+    console.log("⚠️ Unexpected format");
+    return "No valid response from model";
 
   } catch (err) {
-    console.log("❌ Ollama Error:", err.message);
+    console.log("❌ ERROR:", err.message);
 
     if (err.response) {
-      console.log("🔴 Error data:", err.response.data);
+      console.log("🔴 DATA:", err.response.data);
     }
 
     return "Error generating response";
