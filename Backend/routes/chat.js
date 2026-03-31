@@ -1,23 +1,10 @@
 import express from "express";
 import Thread from "../models/Thread.js";
-import getOpenAIAPIResponse from "../utils/openai.js";
+import getOllamaAPIResponse from "../utils/ollamaapi.js";
 
 const router = express.Router();
 
-router.post("/test", async (req, res) => {
-  try {
-    const thread = await Thread({
-      threadId: "unique-thread-id",
-      title: "sample thread",
-    });
 
-    const response = await thread.save();
-    res.send(response);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
 
 // get all threads
 router.get("/thread", async (req, res) => {
@@ -65,25 +52,36 @@ router.post("/chat", async (req, res) => {
   if (!threadId || !message) {
     return res.status(400).json({ error: "threadId and message are required" });
   }
+
+  if (message.trim().length === 0) {
+    return res.status(400).json({ error: "Empty message not allowed" });
+  }
+
   try {
     let thread = await Thread.findOne({ threadId });
+
     if (!thread) {
       thread = new Thread({
         threadId,
-        title: message,
+        title: message.slice(0, 30),
         messages: [{ role: "user", content: message }],
       });
     } else {
       thread.messages.push({ role: "user", content: message });
     }
 
-    const assistantReply = await getOpenAIAPIResponse(message);
+    // ✅ Pass full chat history
+    const assistantReply = await getOllamaAPIResponse(thread.messages);
 
-    thread.messages.push({ role: "assistant", content: assistantReply });
-    thread.updatedAt = new Date();
+    thread.messages.push({
+      role: "assistant",
+      content: assistantReply,
+    });
 
     await thread.save();
+
     res.json({ reply: assistantReply });
+
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Something went wrong" });
