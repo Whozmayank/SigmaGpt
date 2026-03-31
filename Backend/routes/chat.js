@@ -5,8 +5,7 @@ import getOllamaAPIResponse from "../utils/ollamaapi.js";
 const router = express.Router();
 
 
-
-// get all threads
+// GET all threads
 router.get("/thread", async (req, res) => {
   try {
     const threads = await Thread.find({}).sort({ updatedAt: -1 });
@@ -17,73 +16,94 @@ router.get("/thread", async (req, res) => {
   }
 });
 
+
+// GET single thread
 router.get("/thread/:threadId", async (req, res) => {
-  const { threadId } = req.params;
   try {
-    let thread = await Thread.findOne({ threadId });
+    const thread = await Thread.findOne({ threadId: req.params.threadId });
+
     if (!thread) {
-      res.status(404).json({ error: "thread not found" });
+      return res.status(404).json({ error: "Thread not found" });
     }
+
     res.json(thread);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Failed to fetch chat" });
+    res.status(500).json({ error: "Failed to fetch thread" });
   }
 });
 
+
+//  DELETE thread
 router.delete("/thread/:threadId", async (req, res) => {
-  const { threadId } = req.params;
   try {
-    const deletedThread = await Thread.findOneAndDelete({ threadId });
-    if (!deletedThread) {
-      res.status(404).json({ error: "thread not found" });
+    const deleted = await Thread.findOneAndDelete({
+      threadId: req.params.threadId,
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ error: "Thread not found" });
     }
 
-    res.status(200).json({ success: "thread deleted successfully" });
+    res.json({ success: "Thread deleted" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Failed to delete thread" });
   }
 });
 
+
+//  CHAT ROUTE (MAIN LOGIC)
 router.post("/chat", async (req, res) => {
-  let { threadId, message } = req.body;
+  const { threadId, message } = req.body;
 
-  if (!threadId || !message) {
-    return res.status(400).json({ error: "threadId and message are required" });
-  }
+  console.log("📩 Incoming:", { threadId, message });
 
-  if (message.trim().length === 0) {
-    return res.status(400).json({ error: "Empty message not allowed" });
+  if (!threadId || !message || !message.trim()) {
+    return res.status(400).json({ error: "Invalid input" });
   }
 
   try {
     let thread = await Thread.findOne({ threadId });
 
+    //  Create thread if not exists
     if (!thread) {
+      console.log("🆕 Creating new thread");
+
       thread = new Thread({
         threadId,
         title: message.slice(0, 30),
-        messages: [{ role: "user", content: message }],
+        messages: [],
       });
-    } else {
-      thread.messages.push({ role: "user", content: message });
     }
 
-    // ✅ Pass full chat history
+    //  Add user message
+    thread.messages.push({
+      role: "user",
+      content: message,
+    });
+
+    //  Get AI response using FULL history
     const assistantReply = await getOllamaAPIResponse(thread.messages);
 
+    console.log("🤖 Reply:", assistantReply);
+
+    //  Save assistant reply
     thread.messages.push({
       role: "assistant",
       content: assistantReply,
     });
 
+    //  Save thread
     await thread.save();
 
-    res.json({ reply: assistantReply });
+    res.json({
+      reply: assistantReply,
+      thread, // optional but useful
+    });
 
   } catch (err) {
-    console.log(err);
+    console.log("❌ Server Error:", err);
     res.status(500).json({ error: "Something went wrong" });
   }
 });

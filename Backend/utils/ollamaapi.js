@@ -1,29 +1,29 @@
-import "dotenv/config";
+import axios from "axios";
 
-const getOllamaAPIResponse = async (message) => {
-  const options = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "mistral",
-      prompt: message,
-      stream: false,
-    }),
-  };
-
+const getOllamaAPIResponse = async (messages) => {
   try {
-    const response = await fetch(
-      "http://localhost:11434/api/generate",
-      options
+    console.log("📤 Sending to Ollama:", messages);
+
+    const response = await axios.post(
+      "http://localhost:11434/api/chat",
+      {
+        model: "mistral",
+        messages: messages,
+        stream: false,
+      }
     );
 
-    const data = await response.json();
+    console.log("📥 Ollama response:", response.data);
 
-    return data.response; // ✅ correct field
+    return response.data.message.content;
+
   } catch (err) {
-    console.log("Ollama Error:", err);
+    console.log("❌ Ollama Error:", err.message);
+
+    if (err.response) {
+      console.log("🔴 Error data:", err.response.data);
+    }
+
     return "Error generating response";
   }
 };
