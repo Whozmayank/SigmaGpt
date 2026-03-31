@@ -34,7 +34,7 @@ router.get("/thread/:threadId", async (req, res) => {
 });
 
 
-//  DELETE thread
+// DELETE thread
 router.delete("/thread/:threadId", async (req, res) => {
   try {
     const deleted = await Thread.findOneAndDelete({
@@ -53,7 +53,7 @@ router.delete("/thread/:threadId", async (req, res) => {
 });
 
 
-//  CHAT ROUTE (MAIN LOGIC)
+// MAIN CHAT ROUTE
 router.post("/chat", async (req, res) => {
   const { threadId, message } = req.body;
 
@@ -66,7 +66,6 @@ router.post("/chat", async (req, res) => {
   try {
     let thread = await Thread.findOne({ threadId });
 
-    //  Create thread if not exists
     if (!thread) {
       console.log("🆕 Creating new thread");
 
@@ -77,33 +76,34 @@ router.post("/chat", async (req, res) => {
       });
     }
 
-    //  Add user message
+    // add user message
     thread.messages.push({
       role: "user",
       content: message,
     });
 
-    //  Get AI response using FULL history
+    console.log("📚 Conversation:", thread.messages);
+
+    // 🔥 send FULL history to Ollama
     const assistantReply = await getOllamaAPIResponse(thread.messages);
 
     console.log("🤖 Reply:", assistantReply);
 
-    //  Save assistant reply
+    // save assistant reply
     thread.messages.push({
       role: "assistant",
       content: assistantReply,
     });
 
-    //  Save thread
     await thread.save();
 
     res.json({
       reply: assistantReply,
-      thread, // optional but useful
+      thread,
     });
 
   } catch (err) {
-    console.log("❌ Server Error:", err);
+    console.log("❌ SERVER ERROR:", err);
     res.status(500).json({ error: "Something went wrong" });
   }
 });
