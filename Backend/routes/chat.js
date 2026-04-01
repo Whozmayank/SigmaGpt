@@ -1,6 +1,6 @@
 import express from "express";
 import Thread from "../models/Thread.js";
-import getOllamaAPIResponse from "../utils/ollamaapi.js";
+import getGeminiResponse from "../utils/geminiapi.js";
 
 const router = express.Router();
 
@@ -55,6 +55,7 @@ router.delete("/thread/:threadId", async (req, res) => {
 
 // MAIN CHAT ROUTE
 router.post("/chat", async (req, res) => {
+  console.log("🔥 /chat route hit");
   const { threadId, message } = req.body;
 
   console.log("📩 Incoming:", { threadId, message });
@@ -85,7 +86,11 @@ router.post("/chat", async (req, res) => {
     console.log("📚 Conversation:", thread.messages);
 
     // 🔥 send FULL history to Ollama
-    const assistantReply = await getOllamaAPIResponse(thread.messages);
+    const assistantReply = await getGeminiResponse(thread.messages);
+
+    if (!assistantReply || assistantReply === "Error generating response") {
+      return res.status(500).json({ error: "AI failed to respond" });
+    }
 
     console.log("🤖 Reply:", assistantReply);
 
