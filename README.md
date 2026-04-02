@@ -1,59 +1,74 @@
-🧠 SigmaGPT — ChatGPT Clone 
+# 🧠 SigmaGPT — AI Chat Application
 
-SigmaGPT is an AI-powered chat application built using the MERN stack (MongoDB, Express.js, React.js, Node.js).
+SigmaGPT is an AI-powered chat application built using the MERN stack (MongoDB, Express.js, React.js, Node.js), powered by Google Gemini AI.
 
+## 🚀 Features
 
-🚀 Features
+### ✅ Chat with AI
+- Real-time conversation powered by **Google Gemini 2.5 Flash**
+- Messages are displayed with smooth typewriter animation
+- Full conversation history sent on every message for context-aware replies
 
-✅ Chat with AI
+### ✅ Persistent Chat History
+- Each chat thread is stored in **MongoDB**
+- Continue old conversations anytime
+- Threads sorted by last updated
 
-Real-time conversation with intelligent responses.
+### ✅ Modern UI
+- Responsive design built with React and CSS
+- Custom dropdown, loader animations, and dark theme
 
-Messages are displayed with smooth typewriter animation.
+## 🧩 Tech Stack
 
-✅ Persistent Chat History
+| Area | Technology |
+|---|---|
+| Frontend | React.js, JSX, Context API, React Router |
+| Backend | Node.js, Express.js |
+| Database | MongoDB (Mongoose) |
+| Styling | CSS / Font Awesome |
+| AI Integration | Google Gemini API (gemini-2.5-flash) |
 
-Each user’s chat threads are stored in MongoDB.
+## ⚙️ Setup & Installation
 
-You can continue your old conversations anytime.
+### 1. Clone the repo
+git clone https://github.com/your-username/SigmaGPT.git
+cd SigmaGPT
 
-✅ Modern UI
+### 2. Install dependencies
+cd backend && npm install
+cd ../frontend && npm install
 
-Responsive design built with React and CSS.
+### 3. Configure environment variables
+Create a `.env` file in the `/backend` folder:
+GEMINI_API_KEY=your_gemini_api_key_here
+MONGO_URI=your_mongodb_connection_string
+PORT=8080
 
-Includes custom dropdown, loader animations, and dark theme.
+Get your free Gemini API key at: https://aistudio.google.com/apikey
 
-🧩 Tech Stack
-Area	Technology
-Frontend	React.js, JSX, Context API, React Router
-Backend	Node.js, Express.js
-Database	MongoDB (Mongoose)
-Styling	CSS / Font Awesome
-AI Integration	OpenAI API / Custom Chat Endpoint
+### 4. Run the app
+# Backend
+cd backend && node server.js
 
-🎯 Learning Objectives
+# Frontend
+cd frontend && npm run dev
+
+## 🎯 Learning Objectives
 
 This project demonstrates:
+- Full-stack MERN integration
+- Chat-based UI architecture
+- Google Gemini API integration
+- Conversation history management
+- State separation for streaming responses
+- Markdown rendering in React
 
-Full-stack MERN integration
-
-Chat-based UI architecture
-
-State separation for streaming responses
-
-Markdown rendering in React
-
-Real-world AI application structure
-
-
-📌 Future Improvements
-
-Real-time streaming responses (SSE/WebSockets)
-
-Authentication & user accounts
-
-Chat export
-
-Message search
+## 📌 Future Improvements
+- Real-time streaming responses (SSE/WebSockets)
+- Authentication & user accounts
+- Chat export
+- Message search
+- Rate limiting & caching
+- Support for multiple AI models
 
 Rate limiting & caching
